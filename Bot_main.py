@@ -151,7 +151,7 @@ async def guild_add(interaction: discord.Interaction, name: str):
 
     # Création automatique des rôles pour chaque langue déjà définie globalement
     for lang_code in config.get("languages", {}):
-        full_prefix = base_prefix + lang_code
+        full_prefix = f"{base_prefix}_{lang_code}"
         role_name = f"Role_{full_prefix}"
         existing_role = discord.utils.get(guild.roles, name=role_name)
         if existing_role is None:
@@ -300,13 +300,20 @@ async def sync_channels(interaction: discord.Interaction):
         base_prefix = g_config.get("base_prefix")
         lang_roles = {}
         for lang_code in global_languages:
-            full_prefix = base_prefix + lang_code
+            full_prefix = f"{base_prefix}_{lang_code}"
             role_name = f"Role_{full_prefix}"
             role = discord.utils.get(guild_obj.roles, name=role_name)
             if role:
                 lang_roles[lang_code] = role
             else:
                 print(f"Rôle non trouvé : {role_name}")
+                # On créer le rôle ici
+                try:
+                    role = await guild_obj.create_role(name=role_name, reason="Création automatique pour sync_channels", mentionable=False)
+                    lang_roles[lang_code] = role
+                except Exception as e:
+                    print(f"Erreur lors de la création du rôle {role_name} : {e}")
+                
         roles_dict[base_prefix] = lang_roles
     print("Mapping des rôles :", roles_dict)
 
