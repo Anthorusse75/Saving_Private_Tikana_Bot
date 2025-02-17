@@ -1,0 +1,47 @@
+/.vscode
+/01_SAVE
+/A_SUPPRIMER
+/Cogs/SAVED
+/Views/SAVED
+/bunny_translator_2
+/bunny_translator_env
+/temps
+/Logs
+/Dashboard/conf_dashboard.env
+flask_session/*
+/Func_messages/SAVED
+/Func_messages/Tests
+cleanup.sh
+API_rate_limit.py
+package-lock.json
+package.json
+discord.log
+bunny_translator_env/
+*.dist-info/
+
+# Fichiers Pipfile
+Pipfile
+Pipfile.lock
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+
+# Environnements virtuels
+venv/
+.env/
+*.env
+
+# Fichiers de logs
+*.log
+
+# Fichiers générés par l'éditeur ou le système
+*.swp
+*.swo
+.DS_Store
+.idea/
+.vscode/
+
+# Autres fichiers spécifiques
+*.sqlite3
+*.db

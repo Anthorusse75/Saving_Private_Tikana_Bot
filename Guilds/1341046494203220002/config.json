@@ -1,0 +1,19 @@
+{
+    "guildes": {
+        "1": {
+            "id": 1,
+            "name": "Eternal Gladiator",
+            "base_prefix": "EGX"
+        },
+        "2": {
+            "id": 2,
+            "name": "Gladiator United",
+            "base_prefix": "GUX"
+        }
+    },
+    "languages": {
+        "FR": "French",
+        "EN": "English",
+        "DE": "German"
+    }
+}

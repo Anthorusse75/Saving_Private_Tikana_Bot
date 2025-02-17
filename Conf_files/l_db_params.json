@@ -1,0 +1,6 @@
+{
+    "host": "127.0.0.1",
+    "user":"translator_admin",
+    "password": "AdminComplexPassword123!",
+    "database":"Beta_Translator"
+}
