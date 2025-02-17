@@ -38,7 +38,7 @@ async def close_connection(conn: aiomysql.Connection) -> None:
     """
     Fonction asynchrone pour fermer une connexion à la base de données.
     """
-    await conn.close()
+    conn.close()
     
 # ========================================================================
 # Fonctions de requêtes SQL
@@ -49,6 +49,8 @@ async def fetch_text_channel(channel_id: int) -> tuple:
     Fonction asynchrone pour récupérer les informations d'un TextChannel.
     """
     conn = await get_connection()
+    if conn is None:
+        print("Connexion non établie")
     try:
         async with conn.cursor() as cursor:
             await cursor.execute("""
@@ -70,6 +72,8 @@ async def check_text_channel(channel_id: int) -> bool:
     Fonction asynchrone pour vérifier si un TextChannel existe.
     """
     conn = await get_connection()
+    if conn is None:
+        print("Connexion non établie")
     try:
         async with conn.cursor() as cursor:
             await cursor.execute("""
