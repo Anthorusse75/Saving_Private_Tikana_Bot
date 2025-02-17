@@ -269,21 +269,20 @@ async def sync_channels(interaction: discord.Interaction):
     server_id = interaction.guild_id
     guild_obj = interaction.channel.guild
     config = load_server_config(server_id)
-    game_guilds = config.get("guildes", {})        # Ex: {"1": {"id": 1, "name": "...", "base_prefix": "GU1"}, ...}
+    game_guilds = config.get("guildes", {})        # Ex: {"1": {"id": 1, "name": "Guilde1", "base_prefix": "GU1"}, ...}
     global_languages = config.get("languages", {})  # Langues configurées sur le serveur
 
     # Étape 0 : Backup de toutes les permissions avant toute modification
     backup_data = backup_channel_permissions(guild_obj)
     save_backup(server_id, backup_data)
     print("Backup effectué :", backup_data)  # Pour debug
-
     
     # --- Étape 1 : Mise à jour automatique des langues depuis la DB ---
     for channel in guild_obj.channels:
         exists = await check_text_channel(channel.id)
         if exists:
             ch_data = await fetch_text_channel(channel.id)
-            # On suppose que le champ "short_language" se trouve à l'index 7
+            # On suppose ici que le champ "short_language" se trouve à l'index 7
             short_lang = ch_data[7]
             if short_lang:
                 lang_code = short_lang.upper()
@@ -294,7 +293,8 @@ async def sync_channels(interaction: discord.Interaction):
     save_server_config(server_id, config)
 
     # --- Étape 2 : Construction du mapping des rôles pour chaque guilde ---
-    # On crée un dictionnaire du type : { "GU1": { "FR": role, "EN": role, ... }, "GU2": { ... } }
+    # Pour chaque guilde de jeu, on crée un dictionnaire associant chaque code langue à son rôle.
+    # Exemple : { "GU1": { "FR": role, "EN": role, "DE": role }, ... }
     roles_dict = {}
     for g_config in game_guilds.values():
         base_prefix = g_config.get("base_prefix")
@@ -305,7 +305,10 @@ async def sync_channels(interaction: discord.Interaction):
             role = discord.utils.get(guild_obj.roles, name=role_name)
             if role:
                 lang_roles[lang_code] = role
+            else:
+                print(f"Rôle non trouvé : {role_name}")
         roles_dict[base_prefix] = lang_roles
+    print("Mapping des rôles :", roles_dict)
 
     restored_count = 0
 
@@ -313,7 +316,7 @@ async def sync_channels(interaction: discord.Interaction):
     for channel in guild_obj.channels:
         channel_name = channel.name.lower()
 
-        # Cas 1 : Salon de type Catégorie
+        # Cas A : Le salon est une catégorie
         if isinstance(channel, discord.CategoryChannel):
             for base_prefix, lang_roles in roles_dict.items():
                 if channel_name.startswith(base_prefix.lower()) or channel_name.endswith(base_prefix.lower()):
@@ -322,7 +325,7 @@ async def sync_channels(interaction: discord.Interaction):
                                                       overwrite=discord.PermissionOverwrite(view_channel=False))
                         for role in lang_roles.values():
                             await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
-                        # Réinitialisation pour les rôles non gérés
+                        # Pour les autres rôles non gérés, on supprime l'overwrite explicite
                         if channel.overwrites:
                             for target, overw in channel.overwrites.items():
                                 if isinstance(target, discord.Role) and target not in lang_roles.values() and target != guild_obj.default_role:
@@ -330,11 +333,12 @@ async def sync_channels(interaction: discord.Interaction):
                                     new_overwrite.view_channel = None
                                     await channel.set_permissions(target, overwrite=new_overwrite)
                         restored_count += 1
+                        print(f"Catégorie {channel.name} configurée pour la guilde {base_prefix}")
                     except Exception as e:
                         print(f"Erreur dans la configuration de la catégorie {channel.name}: {e}")
-                    break  # Une catégorie ne correspond qu'à une seule guilde
+                    break  # Une catégorie correspond à une seule guilde
 
-        # Cas 2 : Salon classique (texte, vocal, etc.)
+        # Cas B : Salon classique (texte, vocal, etc.)
         else:
             exists = await check_text_channel(channel.id)
             if exists:
@@ -343,7 +347,7 @@ async def sync_channels(interaction: discord.Interaction):
                 if short_lang:
                     short_lang = short_lang.upper()
                     applied = False
-                    # D'abord, tenter de trouver une correspondance avec le préfixe complet (base_prefix + short_lang)
+                    # B1 : Si le nom du salon contient déjà le préfixe complet (base_prefix + short_lang)
                     for base_prefix, lang_roles in roles_dict.items():
                         full_prefix = (base_prefix + short_lang).lower()
                         if channel_name.startswith(full_prefix) or channel_name.endswith(full_prefix):
@@ -363,41 +367,68 @@ async def sync_channels(interaction: discord.Interaction):
                                             await channel.set_permissions(target, overwrite=new_overwrite)
                                 restored_count += 1
                                 applied = True
+                                print(f"Channel {channel.name} configuré avec préfixe complet pour langue {short_lang}")
                             except Exception as e:
-                                print(f"Erreur dans la configuration du channel {channel.name} avec préfixe complet: {e}")
+                                print(f"Erreur dans la configuration du channel {channel.name} (préfixe complet) : {e}")
                             break
-
-                    # Cas 3 : Fallback
-                    # Si le salon ne comporte aucun préfixe, ni dans son nom, ni dans celui de sa catégorie,
-                    # mais qu'il est configuré en DB avec une langue, on applique pour toutes les guildes :
-                    # view_channel=True pour le rôle dont le code correspond à la langue, view_channel=False pour les autres.
-                    if not applied:
-                        # Vérifier si aucun base_prefix n'est présent dans le nom du salon ni dans le nom de la catégorie (s'il existe)
-                        found_prefix = any(base_prefix.lower() in channel_name for base_prefix in roles_dict)
-                        if channel.category is not None:
-                            found_prefix |= any(base_prefix.lower() in channel.category.name.lower() for base_prefix in roles_dict)
-                        if not found_prefix:
+                    # B2 : Si aucune correspondance sur le nom n'a été trouvée,
+                    # mais que le salon est dans une catégorie qui a le préfixe de guilde,
+                    # on se base sur la langue en DB pour configurer le salon.
+                    if not applied and channel.category is not None:
+                        matching_base = None
+                        cat_name = channel.category.name.lower()
+                        for base_prefix in roles_dict:
+                            if base_prefix.lower() in cat_name:
+                                matching_base = base_prefix
+                                break
+                        if matching_base is not None:
                             try:
                                 await channel.set_permissions(guild_obj.default_role,
                                                               overwrite=discord.PermissionOverwrite(view_channel=False))
-                                # Pour chaque guilde, appliquer la configuration en fonction de short_lang
-                                for base_prefix, lang_roles in roles_dict.items():
-                                    for lang_code, role in lang_roles.items():
-                                        if lang_code.upper() == short_lang:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
-                                        else:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=False))
+                                for lang_code, role in roles_dict[matching_base].items():
+                                    if lang_code.upper() == short_lang:
+                                        await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
+                                    else:
+                                        await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=False))
                                 if channel.overwrites:
                                     for target, overw in channel.overwrites.items():
-                                        if isinstance(target, discord.Role) and all(target not in roles.values() for roles in roles_dict.values()) and target != guild_obj.default_role:
+                                        if isinstance(target, discord.Role) and target not in roles_dict[matching_base].values() and target != guild_obj.default_role:
                                             new_overwrite = overw
                                             new_overwrite.view_channel = None
                                             await channel.set_permissions(target, overwrite=new_overwrite)
                                 restored_count += 1
+                                applied = True
+                                print(f"Channel {channel.name} configuré via catégorie {channel.category.name} pour langue {short_lang}")
                             except Exception as e:
-                                print(f"Erreur dans la configuration fallback du channel {channel.name}: {e}")
+                                print(f"Erreur dans la configuration fallback par catégorie pour channel {channel.name}: {e}")
+                    # B3 : Si le salon n'est pas dans une catégorie avec préfixe, on peut appliquer un fallback général
+                    if not applied:
+                        for base_prefix, lang_roles in roles_dict.items():
+                            try:
+                                await channel.set_permissions(guild_obj.default_role,
+                                                              overwrite=discord.PermissionOverwrite(view_channel=False))
+                                for lang_code, role in lang_roles.items():
+                                    if lang_code.upper() == short_lang:
+                                        await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
+                                    else:
+                                        await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=False))
+                                if channel.overwrites:
+                                    for target, overw in channel.overwrites.items():
+                                        if isinstance(target, discord.Role) and target not in lang_roles.values() and target != guild_obj.default_role:
+                                            new_overwrite = overw
+                                            new_overwrite.view_channel = None
+                                            await channel.set_permissions(target, overwrite=new_overwrite)
+                                restored_count += 1
+                                applied = True
+                                print(f"Channel {channel.name} fallback général appliqué pour langue {short_lang}")
+                            except Exception as e:
+                                print(f"Erreur dans le fallback général pour channel {channel.name}: {e}")
+                            break
+            else:
+                print(f"Channel {channel.name} non configuré en DB, ignoré.")
 
     await interaction.followup.send(f"✅ Permissions synchronisées pour **{restored_count}** salons.", ephemeral=True)
+
 
 # --- Commande /rollback ---
 @bot.tree.command(name="rollback", description="Restaurer l'état des permissions des salons depuis le dernier backup")
