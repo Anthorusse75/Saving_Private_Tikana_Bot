@@ -186,69 +186,6 @@ async def guild_list(interaction: discord.Interaction):
                 message += f"   - Langue : **{lang_code}**, Préfixe complet : **{full_prefix}**\n"
     await interaction.response.send_message(message, ephemeral=True)
 
-# --- Commande /server_add_language ---
-@bot.tree.command(name="server_add_language", description="Ajouter une langue au serveur (affecte toutes les guildes de jeu)")
-@app_commands.autocomplete(language=language_autocomplete)
-async def server_add_language(interaction: discord.Interaction, language: str):
-    if language.lower() not in googletrans.LANGUAGES:
-        await interaction.response.send_message("⚠️ Langue non supportée.", ephemeral=True)
-        return
-
-    server_id = interaction.guild_id
-    guild = interaction.channel.guild
-
-    # Récupérer le membre du bot dans le serveur
-    bot_member = guild.me
-    if bot_member is None:
-        try:
-            bot_member = await guild.fetch_member(bot.user.id)
-        except Exception as e:
-            await interaction.response.send_message(
-                "❌ Impossible de récupérer mes informations de membre dans ce serveur.\n"
-                "👉 Assure-toi que l'intent `members` est activé pour mon bot.",
-                ephemeral=True
-            )
-            return
-
-    # Vérification de la permission de créer des rôles
-    if not bot_member.guild_permissions.manage_roles:
-        await interaction.response.send_message(
-            "❌ Je n'ai pas la permission de **créer des rôles**.\n"
-            "👉 Veuillez vérifier que j'ai la permission `Gérer les rôles` et que mon rôle est positionné **au-dessus** des rôles à créer.\n"
-            "⚙️ Pour régler cela, allez dans Paramètres du serveur > Rôles et déplacez mon rôle vers le haut.",
-            ephemeral=True
-        )
-        return
-
-    # Suite de la commande...
-    config = load_server_config(server_id)
-    languages = config.get("languages", {})
-
-    if language.upper() in languages:
-        await interaction.response.send_message("⚠️ Cette langue est déjà ajoutée au serveur.", ephemeral=True)
-        return
-
-    languages[language.upper()] = googletrans.LANGUAGES[language.lower()].title()
-    config["languages"] = languages
-    save_server_config(server_id, config)
-
-    # Création des rôles associés pour chaque guilde de jeu existante
-    for g_config in config.get("guildes", {}).values():
-        base_prefix = g_config.get("base_prefix")
-        full_prefix = base_prefix + language.upper()
-        role_name = f"Role_{full_prefix}"
-        existing_role = discord.utils.get(guild.roles, name=role_name)
-        if existing_role is None:
-            try:
-                await guild.create_role(name=role_name)
-            except Exception as e:
-                print(f"Erreur lors de la création du rôle {role_name} : {e}")
-
-    await interaction.response.send_message(
-        f"✅ Langue **{googletrans.LANGUAGES[language.lower()].title()} ({language.upper()})** ajoutée au serveur.",
-        ephemeral=True
-    )
-
 # --- Commande /server_list_languages ---
 @bot.tree.command(name="server_list_languages", description="Afficher les langues configurées pour le serveur")
 async def server_list_languages(interaction: discord.Interaction):
