@@ -4,29 +4,44 @@ import platform
 import os
 import asyncio
 from discord.ext import commands
-from config import TOKEN
+from config import TOKEN, OWNER_ID  # OWNER_ID: your Discord user ID
 
-# Set up logging
+# Setup logger
 logger = logging.getLogger("bot")
-logger.setLevel(logging.INFO)  # Default level
+logger.setLevel(logging.INFO)  # default level
 handler = logging.StreamHandler()
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-# Global debug flag (default False)
+# Global debug flag
 DEBUG = False
 
-# Define intents
+# Define bot intents
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 intents.guilds = True
 
+# Create bot instance
 bot = commands.Bot(command_prefix="!", intents=intents)
-bot.DEBUG = DEBUG  # Set bot attribute for debug
+bot.DEBUG = DEBUG
 
-# Auto-load cogs
+# Owner-only slash command to toggle debug logging
+@bot.tree.command(name="set_debug", description="Toggle debug logging (Owner only)")
+async def set_debug(interaction: discord.Interaction, value: bool):
+    if interaction.user.id != OWNER_ID:
+        await interaction.response.send_message("❌ You are not authorized to use this command.", ephemeral=True)
+        return
+    bot.DEBUG = value
+    if value:
+        logger.setLevel(logging.DEBUG)
+        await interaction.response.send_message("✅ Debug logging enabled.", ephemeral=True)
+    else:
+        logger.setLevel(logging.INFO)
+        await interaction.response.send_message("✅ Debug logging disabled.", ephemeral=True)
+
+# Auto-load all cogs from the "cogs" directory (ignoring __init__.py)
 async def load_cogs():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py") and filename != "__init__.py":
@@ -49,16 +64,6 @@ async def on_ready():
     logger.info("Slash Commands:")
     for cmd in bot.tree.walk_commands():
         logger.info(f" - {cmd.name}: {cmd.description}")
-
-@bot.tree.command(name="set_debug", description="Toggle debug logging")
-async def set_debug(interaction: discord.Interaction, value: bool):
-    bot.DEBUG = value
-    if value:
-        logger.setLevel(logging.DEBUG)
-        await interaction.response.send_message("Debug logging enabled.", ephemeral=True)
-    else:
-        logger.setLevel(logging.INFO)
-        await interaction.response.send_message("Debug logging disabled.", ephemeral=True)
 
 async def main():
     async with bot:

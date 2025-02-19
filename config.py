@@ -46,6 +46,7 @@ load_dotenv(ENV_FILE)
 
 GOOD_TOKEN = "bot_token" if IS_WINDOWS else "bot_token"
 TOKEN = os.getenv(GOOD_TOKEN)
+OWNER_ID = int(os.getenv("owner_id"))
 
 # ========================================================================
 # Fonctions de chargement de fichiers de configuration
