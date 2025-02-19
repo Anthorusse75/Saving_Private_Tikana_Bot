@@ -4,29 +4,32 @@ import platform
 import os
 import asyncio
 from discord.ext import commands
-from config import TOKEN  # Your token should be defined in config.py
+from config import TOKEN
 
-# Setup logger
+# Set up logging
 logger = logging.getLogger("bot")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.INFO)  # Default level
 handler = logging.StreamHandler()
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-# Define the bot's intents
+# Global debug flag (default False)
+DEBUG = False
+
+# Define intents
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 intents.guilds = True
 
-# Create bot instance
 bot = commands.Bot(command_prefix="!", intents=intents)
+bot.DEBUG = DEBUG  # Set bot attribute for debug
 
-# Auto-load all cogs from the "cogs" folder
+# Auto-load cogs
 async def load_cogs():
     for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
+        if filename.endswith(".py") and filename != "__init__.py":
             try:
                 await bot.load_extension(f"cogs.{filename[:-3]}")
                 logger.info(f"Loaded cog: {filename}")
@@ -46,6 +49,16 @@ async def on_ready():
     logger.info("Slash Commands:")
     for cmd in bot.tree.walk_commands():
         logger.info(f" - {cmd.name}: {cmd.description}")
+
+@bot.tree.command(name="set_debug", description="Toggle debug logging")
+async def set_debug(interaction: discord.Interaction, value: bool):
+    bot.DEBUG = value
+    if value:
+        logger.setLevel(logging.DEBUG)
+        await interaction.response.send_message("Debug logging enabled.", ephemeral=True)
+    else:
+        logger.setLevel(logging.INFO)
+        await interaction.response.send_message("Debug logging disabled.", ephemeral=True)
 
 async def main():
     async with bot:

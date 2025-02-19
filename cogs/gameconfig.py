@@ -2,8 +2,11 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import os, json, asyncio, googletrans
+import logging
 from Func_SQL.funcSQL_utils import fetch_text_channel, check_text_channel
 from Func_SQL.funcSQL_categories import allocate_category, fetch_category_allocation, fetch_all_category_allocations
+
+logger = logging.getLogger("bot")  # Utilise le logger défini dans Bot_main.py
 
 class GameConfig(commands.Cog):
     """Game configuration and administration commands."""
@@ -14,7 +17,7 @@ class GameConfig(commands.Cog):
         if not os.path.exists(self.BASE_DIR):
             os.mkdir(self.BASE_DIR)
     
-    # ─── Server Config Utilities ─────────────────────────────────────────────
+    # ─── Utility Functions (same as before) ───────────────────────────────
     def get_server_folder(self, server_id: int) -> str:
         folder = os.path.join(self.BASE_DIR, str(server_id))
         if not os.path.exists(folder):
@@ -31,7 +34,7 @@ class GameConfig(commands.Cog):
                 with open(path, "r", encoding="utf-8") as f:
                     config = json.load(f)
             except Exception as e:
-                print(f"Error loading config for server {server_id}: {e}")
+                logger.error(f"Error loading config for server {server_id}: {e}")
                 config = {}
         else:
             config = {}
@@ -62,7 +65,6 @@ class GameConfig(commands.Cog):
                 return new_prefix
         return prefix + "0"
 
-    # ─── Backup Utilities ─────────────────────────────────────────────────────
     def backup_channel_permissions(self, guild: discord.Guild) -> dict:
         backup = {}
         for channel in guild.channels:
@@ -76,7 +78,7 @@ class GameConfig(commands.Cog):
                     target_type = "unknown"
                 overwrites_data[str(target.id)] = {
                     "target_type": target_type,
-                    "permissions": overwrite._values  # Use with caution
+                    "permissions": overwrite._values
                 }
             backup[str(channel.id)] = overwrites_data
         return backup
@@ -93,7 +95,6 @@ class GameConfig(commands.Cog):
                 return json.load(f)
         return None
 
-    # ─── Autocompletion Functions ────────────────────────────────────────────
     async def language_autocomplete(self, interaction: discord.Interaction, current: str):
         choices = []
         for code, name in googletrans.LANGUAGES.items():
@@ -122,24 +123,27 @@ class GameConfig(commands.Cog):
                 choices.append(app_commands.Choice(name=display, value=base_prefix))
         return choices[:25]
 
-    # ─── Slash Commands ───────────────────────────────────────────────────────
+    # ─── Slash Commands ─────────────────────────────────────────────────────
     @app_commands.command(name="guild_add", description="Add a new game guild (max 10 per server)")
     async def guild_add(self, interaction: discord.Interaction, name: str):
         server_id = interaction.guild_id
         guild = interaction.guild
         config = self.load_server_config(server_id)
         guildes = config.get("guildes", {})
+
         if len(guildes) >= 10:
             await interaction.response.send_message("⚠️ Maximum number of game guilds reached (10).", ephemeral=True)
             return
+
         if not guild.me.guild_permissions.manage_roles:
             await interaction.response.send_message(
                 "❌ I do not have permission to create roles.\n"
-                "👉 Ensure I have the 'Manage Roles' permission and that my role is above those to be created.\n"
+                "👉 Ensure I have the 'Manage Roles' permission and that my role is above the roles to be created.\n"
                 "⚙️ Please adjust your server settings accordingly.",
                 ephemeral=True
             )
             return
+
         existing_prefixes = [g.get("base_prefix") for g in guildes.values()]
         base_prefix = self.generate_prefix(name, existing_prefixes)
         new_id = 1
@@ -158,7 +162,7 @@ class GameConfig(commands.Cog):
                 try:
                     await guild.create_role(name=role_name)
                 except Exception as e:
-                    print(f"Error creating role {role_name}: {e}")
+                    logger.error(f"Error creating role {role_name}: {e}")
         await interaction.response.send_message(
             f"✅ Game guild added with ID **{new_id}** and base prefix **{base_prefix}**.",
             ephemeral=True
@@ -275,7 +279,7 @@ class GameConfig(commands.Cog):
         # Step 0: Backup permissions
         backup_data = self.backup_channel_permissions(guild_obj)
         self.save_backup(server_id, backup_data)
-        print("Backup completed:", backup_data)
+        logger.debug(f"Backup completed: {backup_data}")
 
         # Step 1: Update languages from DB
         for channel in guild_obj.channels:
@@ -303,7 +307,7 @@ class GameConfig(commands.Cog):
                 if role:
                     lang_roles[lang_code] = role
                 else:
-                    print(f"Role not found: {role_name}")
+                    logger.debug(f"Role not found: {role_name}")
             roles_dict[base_prefix] = lang_roles
 
         restored_count = 0
@@ -318,7 +322,13 @@ class GameConfig(commands.Cog):
                         allocated_game_guild = allocation[1]
                         lang_roles = roles_dict.get(allocated_game_guild, {})
                     else:
-                        lang_roles = {}
+                        # Case 2: Category not allocated and no prefix found.
+                        # Build a union of all roles from all game guilds.
+                        union_roles = {}
+                        for guild_roles in roles_dict.values():
+                            for role in guild_roles.values():
+                                union_roles[role.id] = role
+                        lang_roles = union_roles
                 else:
                     for bp in roles_dict:
                         if channel_name.startswith(bp.lower()) or channel_name.endswith(bp.lower()):
@@ -335,9 +345,9 @@ class GameConfig(commands.Cog):
                                 new_overwrite.view_channel = None
                                 await channel.set_permissions(target, overwrite=new_overwrite)
                     restored_count += 1
-                    print(f"Category {channel.name} configured.")
+                    logger.debug(f"Category {channel.name} configured with union of roles.")
                 except Exception as e:
-                    print(f"Error configuring category {channel.name}: {e}")
+                    logger.error(f"Error configuring category {channel.name}: {e}")
             else:
                 exists = await check_text_channel(channel.id)
                 if exists:
@@ -366,9 +376,9 @@ class GameConfig(commands.Cog):
                                                 await channel.set_permissions(target, overwrite=new_overwrite)
                                     restored_count += 1
                                     applied = True
-                                    print(f"Channel {channel.name} configured with complete prefix for language {short_lang}.")
+                                    logger.debug(f"Channel {channel.name} configured with complete prefix for language {short_lang}.")
                                 except Exception as e:
-                                    print(f"Error configuring channel {channel.name} (complete prefix): {e}")
+                                    logger.error(f"Error configuring channel {channel.name} (complete prefix): {e}")
                                 break
                         if not applied and channel.category is not None:
                             allocation = await fetch_category_allocation(channel.category.id, guild_obj.id)
@@ -390,9 +400,9 @@ class GameConfig(commands.Cog):
                                                 await channel.set_permissions(target, overwrite=new_overwrite)
                                     restored_count += 1
                                     applied = True
-                                    print(f"Channel {channel.name} configured via allocated category for language {short_lang}.")
+                                    logger.debug(f"Channel {channel.name} configured via allocated category for language {short_lang}.")
                                 except Exception as e:
-                                    print(f"Error configuring channel {channel.name} via allocated category: {e}")
+                                    logger.error(f"Error configuring channel {channel.name} via allocated category: {e}")
                         if not applied:
                             matching_guild = None
                             for base_prefix, lang_roles in roles_dict.items():
@@ -416,13 +426,13 @@ class GameConfig(commands.Cog):
                                                 new_overwrite.view_channel = None
                                                 await channel.set_permissions(target, overwrite=new_overwrite)
                                     restored_count += 1
-                                    print(f"Channel {channel.name} fallback configured for language {short_lang} (matching guild: {matching_guild}).")
+                                    logger.debug(f"Channel {channel.name} fallback configured for language {short_lang} (matching guild: {matching_guild}).")
                                 except Exception as e:
-                                    print(f"Error in fallback configuration for channel {channel.name}: {e}")
+                                    logger.error(f"Error in fallback configuration for channel {channel.name}: {e}")
                             else:
-                                print(f"No guild found for language {short_lang} in fallback for channel {channel.name}.")
+                                logger.error(f"No guild found for language {short_lang} in fallback for channel {channel.name}.")
                 else:
-                    print(f"Channel {channel.name} not configured in DB, ignored.")
+                    logger.debug(f"Channel {channel.name} not configured in DB, ignored.")
         await interaction.followup.send(f"✅ Permissions synchronized for **{restored_count}** channels.", ephemeral=True)
 
     @app_commands.command(name="rollback", description="Restore channel permissions from the last backup")
@@ -453,7 +463,7 @@ class GameConfig(commands.Cog):
                 await channel.edit(overwrites=new_overwrites)
                 restored_channels += 1
             except Exception as e:
-                print(f"Error restoring permissions for channel {channel.name}: {e}")
+                logger.error(f"Error restoring permissions for channel {channel.name}: {e}")
         await interaction.followup.send(f"✅ **{restored_channels}** channels restored successfully.", ephemeral=True)
 
     @app_commands.command(name="help", description="Display detailed help information for the bot")
@@ -466,35 +476,12 @@ class GameConfig(commands.Cog):
             "• `/cat_allocate <cat_id> <guilde>` - Allocate a category to a game guild.\n"
             "• `/guild_list` - List all configured game guilds.\n"
             "• `/server_list_languages` - List all languages configured for the server.\n"
-            "• `/sync_channels` - Synchronize channel permissions based on the database and allocations.\n"
-            "• `/rollback` - Restore channel permissions from the last backup.\n\n"
+            "• `/sync_channels` - Synchronize channel permissions based on DB and allocations.\n"
+            "• `/rollback` - Restore channel permissions from the last backup.\n"
+            "• `/help` - Display this help message.\n\n"
             "For further assistance, please refer to the documentation."
         )
         await interaction.response.send_message(help_message, ephemeral=True)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(GameConfig(bot))
-    
-async def teardown(bot: commands.Bot):
-    await bot.remove_cog("GameConfig")
-    
-async def cog_help(bot: commands.Bot):
-    """Optional: A function to list all cogs and their commands."""
-    for cog_name, cog in bot.cogs.items():
-        print(f"{cog_name}:")
-        for command in cog.get_commands():
-            print(f"  - {command.name}: {command.description}")
-
-async def teardown_all(bot: commands.Bot):
-    for cog_name in list(bot.cogs.keys()):
-        await bot.remove_cog(cog_name)
-
-# End of cog
-async def setup(bot: commands.Bot):
-    await bot.add_cog(GameConfig(bot))
-    
-async def teardown(bot: commands.Bot):
-    await bot.remove_cog("GameConfig")
-    
-# (Note: Only one 'setup' function should be exported from a cog module.)
-    
