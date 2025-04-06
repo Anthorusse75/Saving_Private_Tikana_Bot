@@ -1,7 +1,11 @@
+# Func_SQL/funcSQL_utils.py
+
 import aiomysql
 import asyncio
+import logging
 
 from Func_SQL.db_pool import get_pool
+from config import logger
 
 # ========================================================================
 # Définition des tables de la base de données
@@ -45,23 +49,37 @@ async def close_connection(conn: aiomysql.Connection) -> None:
 # ========================================================================
 
 async def fetch_text_channel(channel_id: int) -> tuple:
-    """
-    Fonction asynchrone pour récupérer les informations d'un TextChannel.
-    """
+    logger.debug(f"[fetch_text_channel] Début pour channel_id={channel_id}")
     conn = await get_connection()
-    if conn is None:
-        print("Connexion non établie")
+    logger.debug(f"[fetch_text_channel] Connexion OK pour channel_id={channel_id}")
     try:
         async with conn.cursor() as cursor:
+            logger.debug(f"[fetch_text_channel] Cursor OK, on exécute la requête pour channel_id={channel_id}")
+
+            # Remets ici tes colonnes réelles, par exemple :
             await cursor.execute("""
-                SELECT id, jump_url, mention, name, type, guild_id, Webhook_id, short_language, long_language, TCgroup_id, Ggroup_id
+                SELECT 
+                    id,
+                    jump_url,
+                    mention,
+                    name,
+                    type,
+                    guild_id,
+                    Webhook_id,
+                    short_language,
+                    long_language,
+                    TCgroup_id,
+                    Ggroup_id
                 FROM TextChannel
                 WHERE id = %s
             """, (channel_id,))
+
             result = await cursor.fetchone()
+            logger.debug(f"[fetch_text_channel] fetchone terminé => {result}")
             return result
     finally:
         await close_connection(conn)
+        logger.debug(f"[fetch_text_channel] Connexion fermée pour channel_id={channel_id}")
 
 # ========================================================================
 # Fonctions de verifications SQL

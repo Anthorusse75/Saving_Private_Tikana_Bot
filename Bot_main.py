@@ -1,21 +1,16 @@
+# Bot_main.py
+
 import discord
 import logging
 import platform
 import os
 import asyncio
 from discord.ext import commands
-from config import TOKEN, OWNER_ID  # OWNER_ID: your Discord user ID
+from config import TOKEN, OWNER_ID, logger  # OWNER_ID: your Discord user ID
 
-# Setup logger
-logger = logging.getLogger("bot")
-logger.setLevel(logging.INFO)  # default level
-handler = logging.StreamHandler()
-formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 # Global debug flag
-DEBUG = False
+DEBUG = True
 
 # Define bot intents
 intents = discord.Intents.default()

@@ -1,0 +1,22 @@
+{
+    "guildes": {
+        "1": {
+            "id": 1,
+            "name": "admins",
+            "base_prefix": "AXX"
+        },
+        "2": {
+            "id": 2,
+            "name": "Gladiator United",
+            "base_prefix": "GUX"
+        }
+    },
+    "languages": {
+        "FR": "French",
+        "DE": "German",
+        "EN": "English"
+    },
+    "bot_admins": [
+        "365417631706251265"
+    ]
+}

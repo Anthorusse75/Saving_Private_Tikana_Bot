@@ -1,3 +1,5 @@
+# Func_SQL/funcSQL_categories.py
+
 import aiomysql
 import asyncio
 from Func_SQL.db_pool import get_pool  # Assurez-vous que cette fonction est correctement définie

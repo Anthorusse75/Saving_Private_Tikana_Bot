@@ -1,9 +1,24 @@
+# config.py
+
 import platform
 import os
+import logging
 import json
 from typing import Union, Any
 from dotenv import load_dotenv
 import sys
+
+# =======================================================================
+# Configuration des Loggers
+# ========================================================================
+
+# Setup logger
+logger = logging.getLogger("bot")
+logger.setLevel(logging.DEBUG)  # default level
+handler = logging.StreamHandler()
+formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 # ========================================================================
 # Détection du système d'exploitation

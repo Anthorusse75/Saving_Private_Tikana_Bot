@@ -1,0 +1,33 @@
+Arborescence du répertoire : E:\04_PROGRAMMATION\01_PYTHON\01 SAVING BRYAN
+
+├── .vscode
+│   └── settings.json
+├── Bot_main.py
+├── Bot_main_old.py
+├── Conf_files
+│   ├── __init__.py
+│   ├── l_db_params.json
+│   ├── token.env
+│   └── w_db_params.json
+├── Func_SQL
+│   ├── __init__.py
+│   ├── db_config_loader.py
+│   ├── db_pool.py
+│   ├── funcSQL_categories.py
+│   └── funcSQL_utils.py
+├── Guilds
+│   ├── 1224386588767682621
+│   │   ├── config.json
+│   │   └── permissions_backup.json
+│   ├── 1341046494203220002
+│   │   ├── config.json
+│   │   └── permissions_backup.json
+│   ├── 1345387061917777991
+│   │   └── config.json
+│   ├── 1356339260604547102
+│   │   └── config.json
+│   └── 738090628537385050
+│       └── config.json
+├── cogs
+│   └── gameconfig.py
+└── config.py

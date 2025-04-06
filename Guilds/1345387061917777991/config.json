@@ -1,0 +1,58 @@
+{
+    "guildes": {
+        "1": {
+            "id": 1,
+            "name": "All_members",
+            "base_prefix": "AXX"
+        },
+        "2": {
+            "id": 2,
+            "name": "Gladiators_United",
+            "base_prefix": "GXX"
+        },
+        "3": {
+            "id": 3,
+            "name": "Eternals_Gladiators",
+            "base_prefix": "EXX"
+        },
+        "4": {
+            "id": 4,
+            "name": "Geeks",
+            "base_prefix": "GX1"
+        },
+        "5": {
+            "id": 5,
+            "name": "Staff",
+            "base_prefix": "SXX"
+        },
+        "6": {
+            "id": 6,
+            "name": "Gold_GU",
+            "base_prefix": "GX2"
+        },
+        "7": {
+            "id": 7,
+            "name": "Gold_EG",
+            "base_prefix": "GX3"
+        },
+        "8": {
+            "id": 8,
+            "name": "Eros",
+            "base_prefix": "EX1"
+        },
+        "9": {
+            "id": 9,
+            "name": "GC_GU",
+            "base_prefix": "GX4"
+        },
+        "10": {
+            "id": 10,
+            "name": "GC_EG",
+            "base_prefix": "GX5"
+        }
+    },
+    "languages": {},
+    "bot_admins": [
+        "365417631706251265"
+    ]
+}

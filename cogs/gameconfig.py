@@ -1,28 +1,134 @@
+# cogs/gameconfig.py
+
 import discord
 from discord.ext import commands
 from discord import app_commands
-import os, json, asyncio, googletrans, logging
+import os
+import json
+import asyncio
+import googletrans
+import logging
+
 from Func_SQL.funcSQL_utils import fetch_text_channel, check_text_channel
 from Func_SQL.funcSQL_categories import allocate_category, fetch_category_allocation, fetch_all_category_allocations
+from config import logger
 
-logger = logging.getLogger("bot")
+# -------------------------------------------------------------------------
+# Intervalle (en secondes) entre deux appels set_permissions
+PERMISSION_SET_DELAY = 0.4
 
+# -------------------------------------------------------------------------
+# Permissions complètes pour le bot (vraiment tout)
+# -------------------------------------------------------------------------
+BOT_FULL_PERMS = discord.PermissionOverwrite(
+    view_channel=True,
+    manage_channels=True,
+    manage_roles=True,
+    manage_webhooks=True,
+    create_instant_invite=True,
+    send_messages=True,
+    send_tts_messages=True,
+    manage_messages=True,
+    embed_links=True,
+    attach_files=True,
+    read_message_history=True,
+    mention_everyone=True,
+    external_emojis=True,
+    add_reactions=True,
+    connect=True,
+    speak=True,
+    stream=True,
+    use_application_commands=True,
+    manage_threads=True,
+    create_public_threads=True,
+    create_private_threads=True,
+    send_messages_in_threads=True,
+    use_embedded_activities=True,
+    use_external_stickers=True,
+    priority_speaker=True,
+    request_to_speak=True
+)
+
+# -------------------------------------------------------------------------
+# 2 rôles par catégorie : READ = lecture seule, WRITE = lecture + écriture
+# -------------------------------------------------------------------------
+READ_ONLY_PERMS = discord.PermissionOverwrite(
+    read_message_history=True,
+    send_messages=False
+)
+READ_WRITE_PERMS = discord.PermissionOverwrite(
+    # Aucune gestion view_channel
+    read_message_history=True,
+    
+    # Autres permissions "basique d'écriture"
+    send_messages=True,
+    attach_files=True,
+    embed_links=True,
+    add_reactions=True
+)
+
+# -------------------------------------------------------------------------
+# "Basic perms" pour @everyone (on part de l'idée que c'est "rien du tout")
+# -------------------------------------------------------------------------
+EVERYONE_BASIC = discord.PermissionOverwrite(
+    view_channel=False
+)
+
+# -------------------------------------------------------------------------
+# Comparaison d'overwrites
+# -------------------------------------------------------------------------
+def needs_update(current: discord.PermissionOverwrite, new: discord.PermissionOverwrite) -> bool:
+    return current._values != new._values
+
+async def set_perms_if_needed(
+    channel: discord.abc.GuildChannel,
+    target: discord.abc.Snowflake,
+    overwrite: discord.PermissionOverwrite,
+    reason: str = None
+) -> bool:
+    """
+    Met à jour l'overwrite pour 'target' si c'est vraiment différent.
+    Retourne True si on a effectivement appelé set_permissions.
+    """
+    current = channel.overwrites.get(target)
+    if not current:
+        # Pas d'overwrite existant
+        if not overwrite._values:
+            return False  # rien à faire
+        await channel.set_permissions(target, overwrite=overwrite, reason=reason)
+        return True
+    else:
+        if needs_update(current, overwrite):
+            await channel.set_permissions(target, overwrite=overwrite, reason=reason)
+            return True
+    return False
+
+async def remove_all_overwrites_except_everyone(channel: discord.abc.GuildChannel) -> None:
+    """
+    Retire tous les overwrites, puis remet @everyone = EVERYONE_BASIC.
+    """
+    # Récupère l'@everyone
+    everyone_role = channel.guild.default_role
+    # On supprime tous les overwrites
+    await channel.edit(overwrites={})
+    # On remet "everyone" = perms basiques
+    await channel.set_permissions(everyone_role, overwrite=EVERYONE_BASIC, reason="wipe overwrites except everyone")
+
+# -------------------------------------------------------------------------
 class GameConfig(commands.Cog):
     """Game configuration, admin management, and synchronization commands."""
-    
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.BASE_DIR = "Guilds"
-        if not os.path.exists(self.BASE_DIR):
-            os.mkdir(self.BASE_DIR)
+        os.makedirs(self.BASE_DIR, exist_ok=True)
         # Schedule the update of all server configurations on startup
         self.bot.loop.create_task(self.update_all_server_configs())
 
     # ─── Server Configuration Utilities ─────────────────────────────────────
     def get_server_folder(self, server_id: int) -> str:
         folder = os.path.join(self.BASE_DIR, str(server_id))
-        if not os.path.exists(folder):
-            os.makedirs(folder)
+        os.makedirs(folder, exist_ok=True)
         return folder
 
     def get_server_config_path(self, server_id: int) -> str:
@@ -71,7 +177,6 @@ class GameConfig(commands.Cog):
     async def update_all_server_configs(self):
         """Scan and update all server config files to ensure required keys exist."""
         guilds_folder = self.BASE_DIR
-        # Iterate over each subfolder (each represents a server by its ID)
         for folder in os.listdir(guilds_folder):
             config_path = os.path.join(guilds_folder, folder, "config.json")
             if os.path.exists(config_path):
@@ -89,7 +194,6 @@ class GameConfig(commands.Cog):
                     config["languages"] = {}
                     updated = True
                 if "bot_admins" not in config:
-                    # Initialize bot_admins with an empty list.
                     config["bot_admins"] = []
                     updated = True
                 if updated:
@@ -99,7 +203,7 @@ class GameConfig(commands.Cog):
                         logger.info(f"Updated config for guild {folder}.")
                     except Exception as e:
                         logger.error(f"Error updating config for guild {folder}: {e}")
-    
+
     # ─── Backup Utilities ─────────────────────────────────────────────────────
     def backup_channel_permissions(self, guild: discord.Guild) -> dict:
         backup = {}
@@ -171,7 +275,10 @@ class GameConfig(commands.Cog):
         admins = self.get_bot_admins(guild, config)
         return str(member.id) in admins or member.id == guild.owner_id
 
-    # ─── Slash Commands ─────────────────────────────────────────────────────
+    # ──────────────────────────────────────────────────────────────────────────
+    # Commands
+    # ──────────────────────────────────────────────────────────────────────────
+
     @app_commands.command(name="guild_add", description="Add a new game guild (max 10 per server)")
     async def guild_add(self, interaction: discord.Interaction, name: str):
         server_id = interaction.guild_id
@@ -252,14 +359,11 @@ class GameConfig(commands.Cog):
             return
         guild_obj = interaction.guild
         guild_id = guild_obj.id
-        category = None
-        for cat in guild_obj.categories:
-            if str(cat.id) == cat_id:
-                category = cat
-                break
-        if category is None:
+        category = discord.utils.get(guild_obj.categories, id=int(cat_id))
+        if not category:
             await interaction.response.send_message(f"❌ Category with ID {cat_id} not found.", ephemeral=True)
             return
+
         config = self.load_server_config(guild_id)
         game_guilds = config.get("guildes", {})
         allocated_game_guild_id = None
@@ -312,174 +416,248 @@ class GameConfig(commands.Cog):
             message += f"• **{name} ({code})**\n"
         await interaction.response.send_message(message, ephemeral=True)
 
-    @app_commands.command(name="sync_channels", description="Synchronize channel permissions based on DB, allocations, and language configuration")
+    async def ensure_read_write_roles(self, guild: discord.Guild, category: discord.CategoryChannel):
+        """
+        Assure 2 rôles <CategoryName>_READ et <CategoryName>_WRITE, les crée si besoin.
+        Retourne (read_role, write_role).
+        """
+        cat_name_sanit = category.name.replace(" ", "_")
+        read_name = f"{cat_name_sanit}_READ"
+        write_name = f"{cat_name_sanit}_WRITE"
+
+        read_role = discord.utils.get(guild.roles, name=read_name)
+        if not read_role:
+            read_role = await guild.create_role(name=read_name)
+            logger.debug(f"Création du rôle: {read_name}")
+
+        write_role = discord.utils.get(guild.roles, name=write_name)
+        if not write_role:
+            write_role = await guild.create_role(name=write_name)
+            logger.debug(f"Création du rôle: {write_name}")
+
+        return read_role, write_role
+
+    @app_commands.command(name="sync_channels", description="Synchronize channel permissions: wipe them, bot full perms, 2 roles per cat, plus short_lang logic.")
     async def sync_channels(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
-        server_id = interaction.guild_id
-        guild_obj = interaction.guild
+        logger.debug("===== [sync_channels] Début de la commande. =====")
+        try:
+            await interaction.response.defer(ephemeral=True)
+        except:
+            pass
+
+        guild = interaction.guild
+        if not guild:
+            await interaction.followup.send("❌ Impossible de synchroniser hors d'un serveur.", ephemeral=True)
+            return
+
+        server_id = guild.id
+        logger.debug(f"[sync_channels] Guild ID = {server_id}, Name = {guild.name} — {len(guild.channels)} channels trouvés.")
+
         config = self.load_server_config(server_id)
         game_guilds = config.get("guildes", {})
         global_languages = config.get("languages", {})
 
-        # Step 0: Backup permissions
-        backup_data = self.backup_channel_permissions(guild_obj)
+        # Step 0 : backup
+        backup_data = self.backup_channel_permissions(guild)
         self.save_backup(server_id, backup_data)
-        logger.debug(f"Backup completed: {backup_data}")
+        logger.debug("[sync_channels] Backup completed OK")
 
-        # Step 1: Update languages from DB
-        for channel in guild_obj.channels:
-            exists = await check_text_channel(channel.id)
-            if exists:
+        set_permissions_count = 0
+        restored_count = 0
+
+        async def maybe_sleep():
+            await asyncio.sleep(PERMISSION_SET_DELAY)
+
+        # Step 1 : Met à jour les langues depuis la DB
+        for channel in guild.channels:
+            exist = await check_text_channel(channel.id)
+            if exist:
                 ch_data = await fetch_text_channel(channel.id)
-                short_lang = ch_data[7]  # Adjust index per your DB
-                if short_lang:
-                    lang_code = short_lang.upper()
-                    if lang_code not in global_languages:
-                        lang_full = googletrans.LANGUAGES.get(lang_code.lower(), lang_code).title()
-                        global_languages[lang_code] = lang_full
+                if len(ch_data) > 7 and ch_data[7]:
+                    short_lang = ch_data[7].upper()
+                    if short_lang not in global_languages:
+                        lang_full = googletrans.LANGUAGES.get(short_lang.lower(), short_lang).title()
+                        global_languages[short_lang] = lang_full
         config["languages"] = global_languages
         self.save_server_config(server_id, config)
 
-        # Step 2: Build roles mapping for each game guild
+        # Step 2 : Build roles mapping (base_prefix -> {lang_code: role})
         roles_dict = {}
         for g_config in game_guilds.values():
-            base_prefix = g_config.get("base_prefix")
-            lang_roles = {}
+            bp = g_config.get("base_prefix")
+            if not bp:
+                continue
+            local_map = {}
             for lang_code in global_languages:
-                full_prefix = f"{base_prefix}_{lang_code}"
-                role_name = f"Role_{full_prefix}"
-                role = discord.utils.get(guild_obj.roles, name=role_name)
-                if role:
-                    lang_roles[lang_code] = role
-                else:
-                    logger.debug(f"Role not found: {role_name}")
-            roles_dict[base_prefix] = lang_roles
+                r_name = f"Role_{bp}_{lang_code}"
+                role = discord.utils.get(guild.roles, name=r_name)
+                if not role:
+                    try:
+                        role = await guild.create_role(name=r_name)
+                        logger.debug(f"Créé role {r_name}")
+                    except Exception as e:
+                        logger.error(f"Erreur creation role {r_name}: {e}")
+                        continue
+                local_map[lang_code] = role
+            roles_dict[bp] = local_map
 
-        restored_count = 0
-        # Step 3: Apply configuration to each channel/category
-        for channel in guild_obj.channels:
-            channel_name = channel.name.lower()
-            # Category branch
+        logger.debug("[sync_channels] Roles dict complet.")
+
+        # Step 3 : Parcours de chaque canal
+        for i, channel in enumerate(guild.channels, start=1):
+            logger.debug(f"[{i}/{len(guild.channels)}] Traitement du canal '{channel.name}' (ID={channel.id})")
+
+            # 3a) Wipe total => on ne garde que @everyone basic
+            await remove_all_overwrites_except_everyone(channel)
+            set_permissions_count += 1
+            await maybe_sleep()
+
+            # 3b) Bot full perms
+            changed = await set_perms_if_needed(channel, guild.me, BOT_FULL_PERMS, reason="bot full perms")
+            if changed:
+                set_permissions_count += 1
+                await maybe_sleep()
+
+            # 3c) 2 rôles par catégorie si c'est une CategoryChannel
             if isinstance(channel, discord.CategoryChannel):
-                has_prefix = any(channel_name.startswith(bp.lower()) or channel_name.endswith(bp.lower()) for bp in roles_dict)
+                read_role, write_role = await self.ensure_read_write_roles(guild, channel)
+                c1 = await set_perms_if_needed(channel, read_role, READ_ONLY_PERMS, reason="cat read role")
+                if c1: set_permissions_count += 1; await maybe_sleep()
+                c2 = await set_perms_if_needed(channel, write_role, READ_WRITE_PERMS, reason="cat write role")
+                if c2: set_permissions_count += 1; await maybe_sleep()
+
+                # On applique la logique “prefix/alloc/union”
+                cat_name = channel.name.lower()
+                has_prefix = any(cat_name.startswith(bp.lower()) or cat_name.endswith(bp.lower()) for bp in roles_dict)
                 if not has_prefix:
-                    allocation = await fetch_category_allocation(channel.id, guild_obj.id)
+                    # Regarde alloc DB
+                    allocation = await fetch_category_allocation(channel.id, guild.id)
                     if allocation:
-                        allocated_game_guild = allocation[1]
-                        lang_roles = roles_dict.get(allocated_game_guild, {})
+                        allocated_bp = allocation[1]
+                        # view_channel = True pour tous les roles de ce bp
+                        for r_lang in roles_dict.get(allocated_bp, {}).values():
+                            c3 = await set_perms_if_needed(channel, r_lang, discord.PermissionOverwrite(view_channel=True), reason="cat alloc")
+                            if c3: set_permissions_count += 1; await maybe_sleep()
                     else:
-                        # Case 2: Not allocated and no prefix – union of all roles from all game guilds
-                        union_roles = {}
-                        for guild_roles in roles_dict.values():
-                            for role in guild_roles.values():
-                                union_roles[role.id] = role
-                        lang_roles = union_roles
+                        # union
+                        union_map = {}
+                        for local_map in roles_dict.values():
+                            for rr in local_map.values():
+                                union_map[rr.id] = rr
+                        for r_lang in union_map.values():
+                            c4 = await set_perms_if_needed(channel, r_lang, discord.PermissionOverwrite(view_channel=True), reason="cat union")
+                            if c4: set_permissions_count += 1; await maybe_sleep()
                 else:
+                    # prefix => on applique
                     for bp in roles_dict:
-                        if channel_name.startswith(bp.lower()) or channel_name.endswith(bp.lower()):
-                            lang_roles = roles_dict[bp]
+                        if cat_name.startswith(bp.lower()) or cat_name.endswith(bp.lower()):
+                            for r_lang in roles_dict[bp].values():
+                                c5 = await set_perms_if_needed(channel, r_lang, discord.PermissionOverwrite(view_channel=True), reason="cat prefix")
+                                if c5: set_permissions_count += 1; await maybe_sleep()
                             break
-                try:
-                    await channel.set_permissions(guild_obj.default_role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                    for role in lang_roles.values():
-                        await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
-                    if channel.overwrites:
-                        for target, overw in channel.overwrites.items():
-                            if isinstance(target, discord.Role) and target not in lang_roles.values() and target != guild_obj.default_role:
-                                new_overwrite = overw
-                                new_overwrite.view_channel = None
-                                await channel.set_permissions(target, overwrite=new_overwrite)
-                    restored_count += 1
-                    logger.debug(f"Category {channel.name} configured with union of roles.")
-                except Exception as e:
-                    logger.error(f"Error configuring category {channel.name}: {e}")
-            # Channel branch
+
+                restored_count += 1
             else:
-                exists = await check_text_channel(channel.id)
-                if exists:
+                # 3d) Pour un TextChannel / VoiceChannel
+                exist = await check_text_channel(channel.id)
+                if not exist:
+                    # Non configuré => union de tous les roles => view_channel=True
+                    union_map = {}
+                    for local_map in roles_dict.values():
+                        for rr in local_map.values():
+                            union_map[rr.id] = rr
+                    for r_lang in union_map.values():
+                        c6 = await set_perms_if_needed(channel, r_lang, discord.PermissionOverwrite(view_channel=True), reason="channel union noDB")
+                        if c6: set_permissions_count += 1; await maybe_sleep()
+                    logger.debug(f"Channel '{channel.name}' => non-DB => union applied.")
+                    restored_count += 1
+                else:
+                    # canal en DB => essaye short_lang
                     ch_data = await fetch_text_channel(channel.id)
-                    short_lang = ch_data[7]
+                    short_lang = ch_data[7] if len(ch_data) > 7 else None
                     if short_lang:
                         short_lang = short_lang.upper()
                         applied = False
-                        for base_prefix, lang_roles in roles_dict.items():
-                            bp_lower = base_prefix.lower()
-                            short_lang_lower = short_lang.lower()
-                            full_prefix = f"{bp_lower}_{short_lang_lower}"
-                            if channel_name.startswith(full_prefix) or channel_name.endswith(full_prefix):
-                                try:
-                                    await channel.set_permissions(guild_obj.default_role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                                    for lang_code, role in lang_roles.items():
-                                        if lang_code.upper() == short_lang:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
-                                        else:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                                    if channel.overwrites:
-                                        for target, overw in channel.overwrites.items():
-                                            if isinstance(target, discord.Role) and target not in lang_roles.values() and target != guild_obj.default_role:
-                                                new_overwrite = overw
-                                                new_overwrite.view_channel = None
-                                                await channel.set_permissions(target, overwrite=new_overwrite)
-                                    restored_count += 1
-                                    applied = True
-                                    logger.debug(f"Channel {channel.name} configured with complete prefix for language {short_lang}.")
-                                except Exception as e:
-                                    logger.error(f"Error configuring channel {channel.name} (complete prefix): {e}")
+
+                        # prefix complet ?
+                        for bp, local_map in roles_dict.items():
+                            full_prefix = f"{bp.lower()}_{short_lang.lower()}"
+                            if channel.name.lower().startswith(full_prefix) or channel.name.lower().endswith(full_prefix):
+                                # Applique sur ce canal
+                                for lang_code, r_lang in local_map.items():
+                                    # Seule la langue == short_lang => True ; sinon => False
+                                    ow = (
+                                        discord.PermissionOverwrite(view_channel=True)
+                                        if lang_code.upper() == short_lang.upper()
+                                        else discord.PermissionOverwrite(view_channel=False)
+                                    )
+                                    c7 = await set_perms_if_needed(channel, r_lang, ow, reason="prefix complet channel")
+                                    if c7: set_permissions_count += 1
+                                    await maybe_sleep()
+
+                                restored_count += 1
+                                applied = True
                                 break
-                        if not applied and channel.category is not None:
-                            allocation = await fetch_category_allocation(channel.category.id, guild_obj.id)
-                            if allocation:
-                                allocated_game_guild = allocation[1]
-                                lang_roles = roles_dict.get(allocated_game_guild, {})
-                                try:
-                                    await channel.set_permissions(guild_obj.default_role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                                    for lang_code, role in lang_roles.items():
-                                        if lang_code.upper() == short_lang:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
-                                        else:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                                    if channel.overwrites:
-                                        for target, overw in channel.overwrites.items():
-                                            if isinstance(target, discord.Role) and target not in lang_roles.values() and target != guild_obj.default_role:
-                                                new_overwrite = overw
-                                                new_overwrite.view_channel = None
-                                                await channel.set_permissions(target, overwrite=new_overwrite)
-                                    restored_count += 1
-                                    applied = True
-                                    logger.debug(f"Channel {channel.name} configured via allocated category for language {short_lang}.")
-                                except Exception as e:
-                                    logger.error(f"Error configuring channel {channel.name} via allocated category: {e}")
+
+                        if not applied and channel.category:
+                            cat_alloc = await fetch_category_allocation(channel.category.id, guild.id)
+                            if cat_alloc:
+                                allocated_bp = cat_alloc[1]
+                                local_map = roles_dict.get(allocated_bp, {})
+                                for lang_code, r_lang in local_map.items():
+                                    # Seule la langue == short_lang => True
+                                    ow = (
+                                        discord.PermissionOverwrite(view_channel=True)
+                                        if lang_code.upper() == short_lang.upper()
+                                        else discord.PermissionOverwrite(view_channel=False)
+                                    )
+                                    c8 = await set_perms_if_needed(channel, r_lang, ow, reason="alloc cat channel")
+                                    if c8: set_permissions_count += 1
+                                    await maybe_sleep()
+
+                                restored_count += 1
+                                applied = True
+
+
                         if not applied:
-                            matching_guild = None
-                            for base_prefix, lang_roles in roles_dict.items():
-                                if short_lang in (code.upper() for code in lang_roles.keys()):
-                                    matching_guild = base_prefix
+                            matched_bp = None
+                            for bp, local_map in roles_dict.items():
+                                if short_lang in [lc.upper() for lc in local_map.keys()]:
+                                    matched_bp = bp
                                     break
-                            if matching_guild:
-                                try:
-                                    await channel.set_permissions(guild_obj.default_role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                                    for lang_code, role in roles_dict[matching_guild].items():
-                                        if lang_code.upper() == short_lang:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=True))
-                                        else:
-                                            await channel.set_permissions(role, overwrite=discord.PermissionOverwrite(view_channel=False))
-                                    if channel.overwrites:
-                                        for target, overw in channel.overwrites.items():
-                                            if (isinstance(target, discord.Role) and 
-                                                target not in roles_dict[matching_guild].values() and 
-                                                target != guild_obj.default_role):
-                                                new_overwrite = overw
-                                                new_overwrite.view_channel = None
-                                                await channel.set_permissions(target, overwrite=new_overwrite)
-                                    restored_count += 1
-                                    logger.debug(f"Channel {channel.name} fallback configured for language {short_lang} (matching guild: {matching_guild}).")
-                                except Exception as e:
-                                    logger.error(f"Error in fallback configuration for channel {channel.name}: {e}")
+                            if matched_bp:
+                                for lang_code, r_lang in roles_dict[matched_bp].items():
+                                    # Seule la langue == short_lang => True ; sinon => False
+                                    ow = (
+                                        discord.PermissionOverwrite(view_channel=True)
+                                        if lang_code.upper() == short_lang.upper()
+                                        else discord.PermissionOverwrite(view_channel=False)
+                                    )
+                                    c9 = await set_perms_if_needed(channel, r_lang, ow, reason="fallback channel")
+                                    if c9: set_permissions_count += 1
+                                    await maybe_sleep()
+                                restored_count += 1
                             else:
-                                logger.error(f"No guild found for language {short_lang} in fallback for channel {channel.name}.")
-                else:
-                    logger.debug(f"Channel {channel.name} not configured in DB, ignored.")
-        await interaction.followup.send(f"✅ Permissions synchronized for **{restored_count}** channels.", ephemeral=True)
+                                logger.error(f"No guild found for short_lang={short_lang} on channel {channel.name} fallback.")
+                    else:
+                        # short_lang = None => union
+                        union_map = {}
+                        for local_map in roles_dict.values():
+                            for rr in local_map.values():
+                                union_map[rr.id] = rr
+                        for r_lang in union_map.values():
+                            c10 = await set_perms_if_needed(channel, r_lang, discord.PermissionOverwrite(view_channel=True), reason="short_lang None => union")
+                            if c10: set_permissions_count += 1; await maybe_sleep()
+                        restored_count += 1
+                        logger.debug(f"Channel '{channel.name}' => short_lang=None => union applied.")
+
+            logger.debug(f"[{i}/{len(guild.channels)}] Fin du canal '{channel.name}'. (set_perms_count={set_permissions_count})")
+
+        msg = f"✅ Permissions synchronized for **{restored_count}** channels.\n" \
+              f"(set_permissions called {set_permissions_count} times)."
+        logger.debug(msg)
+        await interaction.followup.send(msg, ephemeral=True)
+        logger.debug("===== [sync_channels] Fin de la commande. =====")
 
     @app_commands.command(name="rollback", description="Restore channel permissions from the last backup")
     async def rollback(self, interaction: discord.Interaction):
@@ -495,11 +673,11 @@ class GameConfig(commands.Cog):
             ch_backup = backup_data.get(str(channel.id), {})
             new_overwrites = {}
             for target_id, data in ch_backup.items():
-                target_type = data.get("target_type")
+                ttype = data.get("target_type")
                 perms = data.get("permissions", {})
-                if target_type == "role":
+                if ttype == "role":
                     target = guild.get_role(int(target_id))
-                elif target_type == "member":
+                elif ttype == "member":
                     target = guild.get_member(int(target_id))
                 else:
                     target = None
@@ -522,7 +700,7 @@ class GameConfig(commands.Cog):
             "• `/cat_allocate <cat_id> <guilde>` - Allocate a category to a game guild.\n"
             "• `/guild_list` - List all configured game guilds.\n"
             "• `/server_list_languages` - List all languages configured for the server.\n"
-            "• `/sync_channels` - Synchronize channel permissions based on DB, allocations, and language configuration.\n"
+            "• `/sync_channels` - Wipes all overwrites, sets bot full perms, 2 roles per category (READ,WRITE), then short_lang logic.\n"
             "• `/rollback` - Restore channel permissions from the last backup.\n"
             "• `/admin_add <user>` - Add a bot admin for this server.\n"
             "• `/admin_remove <user>` - Remove a bot admin for this server.\n"
@@ -585,8 +763,7 @@ class GameConfig(commands.Cog):
                 admin_list.append(f"<@{admin_id}> (`{admin_id}`)")
         message = "**Bot Admins for this server:**\n" + "\n".join(admin_list)
         await interaction.response.send_message(message, ephemeral=True)
-    
-    # ─── Event Listeners ─────────────────────────────────────────────────────
+
     @commands.Cog.listener()
     async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
         config = self.load_server_config(after.id)
@@ -614,6 +791,7 @@ class GameConfig(commands.Cog):
         if os.path.exists(config_path):
             os.remove(config_path)
             logger.info(f"Cleaned up configuration for guild {guild.name} after removal.")
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(GameConfig(bot))
