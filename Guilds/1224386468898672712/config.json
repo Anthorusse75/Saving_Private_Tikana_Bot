@@ -12,9 +12,9 @@
         }
     },
     "languages": {
+        "DE": "German",
         "EN": "English",
-        "FR": "French",
-        "DE": "German"
+        "FR": "French"
     },
     "bot_admins": [
         "365417631706251265"

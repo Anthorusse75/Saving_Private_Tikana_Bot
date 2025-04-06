@@ -14,7 +14,9 @@ from config import logger
 
 # -------------------------------------------------------------------------
 # Intervalle (en secondes) entre deux appels set_permissions
-PERMISSION_SET_DELAY = 0.4
+# (augmenté à 1.0 pour limiter la cadence)
+# -------------------------------------------------------------------------
+PERMISSION_SET_DELAY = 1.0
 
 # -------------------------------------------------------------------------
 # Permissions complètes pour le bot (vraiment tout)
@@ -49,7 +51,7 @@ BOT_FULL_PERMS = discord.PermissionOverwrite(
 )
 
 # -------------------------------------------------------------------------
-# Anciennement deux rôles (READ & WRITE), 
+# Anciennement deux rôles (READ & WRITE),
 # désormais on ne garde QUE WRITE (pour l'écriture).
 # Pas de view_channel => se combine avec la guilde+langue.
 # -------------------------------------------------------------------------
@@ -62,9 +64,9 @@ WRITE_PERMS = discord.PermissionOverwrite(
 )
 
 # -------------------------------------------------------------------------
-# Permissions basiques pour @everyone = ici, on a mis view_channel=True, 
-# si tu veux que personne ne voie rien par défaut, mets False. 
-# A toi d’ajuster selon tes besoins.
+# Permissions basiques pour @everyone :
+# EVERYONE_BASIC_WITH_VIEW = tout le monde peut voir (ex. pour un reset complet).
+# EVERYONE_BASIC_WITHOUT_VIEW = personne ne voit, le reste = None (pas défini).
 # -------------------------------------------------------------------------
 EVERYONE_BASIC_WITH_VIEW = discord.PermissionOverwrite(
     view_channel=True,
@@ -117,9 +119,38 @@ async def set_perms_if_needed(
             return True
     return False
 
+# -------------------------------------------------------------------------
+# Fonction enveloppant set_perms_if_needed(...) avec un timeout + try/except
+# pour détecter les blocages ou exceptions.
+# -------------------------------------------------------------------------
+async def set_perms_with_timeout(
+    channel: discord.abc.GuildChannel,
+    target: discord.abc.Snowflake,
+    overwrite: discord.PermissionOverwrite,
+    reason: str = None,
+    timeout: float = 10.0
+) -> bool:
+    """
+    Appelle set_perms_if_needed(...) avec un timeout de 10s.
+    Loggue en cas d'exception ou de dépassement.
+    Retourne True si le set_permissions a effectivement été appelé, False sinon.
+    """
+    logger.debug(f"[DEBUG] set_perms_with_timeout -> channel={channel.id} target={target} reason={reason} overwrite={overwrite._values}")
+    try:
+        return await asyncio.wait_for(
+            set_perms_if_needed(channel, target, overwrite, reason=reason),
+            timeout=timeout
+        )
+    except asyncio.TimeoutError:
+        logger.error(f"[TIMEOUT] set_perms_if_needed bloqué +10s pour channel={channel.id}, target={target}, reason={reason}")
+        return False
+    except Exception as e:
+        logger.error(f"[EXCEPTION] set_perms_if_needed sur channel={channel.id}, target={target}, reason={reason} : {e}", exc_info=True)
+        return False
+
 async def remove_all_overwrites_except_everyone(channel: discord.abc.GuildChannel) -> None:
     """
-    Retire tous les overwrites, puis remet @everyone = EVERYONE_BASIC.
+    Retire tous les overwrites, puis remet @everyone = EVERYONE_BASIC_WITH_VIEW.
     """
     everyone_role = channel.guild.default_role
     await channel.edit(overwrites={})
@@ -326,7 +357,7 @@ class GameConfig(commands.Cog):
     @bot_admin_only()
     async def full_reset_permissions(self, interaction: discord.Interaction):
         """
-        Cette commande va passer sur tous les salons du serveur et 
+        Cette commande va passer sur tous les salons du serveur et
         supprimer tous les overwrites, puis remettre @everyone = EVERYONE_BASIC.
         """
         guild = interaction.guild
@@ -550,8 +581,8 @@ class GameConfig(commands.Cog):
     # spéciaux, remplace espaces multiples par "_", tout en MAJUSCULES
     # ---------------------------------------------------------------------
     def sanitize_name(self, name: str) -> str:
-        cleaned = re.sub(r'[^a-zA-Z0-9\s]', '', name)  # Retire tout ce qui n'est pas lettre/chiffre/espace
-        cleaned = re.sub(r'\s+', '_', cleaned.strip()) # Remplace enchaînements d'espaces par underscore
+        cleaned = re.sub(r'[^a-zA-Z0-9\s]', '', name)
+        cleaned = re.sub(r'\s+', '_', cleaned.strip())
         cleaned = cleaned.upper()
         return cleaned
 
@@ -614,12 +645,10 @@ class GameConfig(commands.Cog):
         import googletrans
         new_langs_dict = {}
         for lang_code in detected_langs:
-            # Tente de récupérer un nom complet depuis googletrans
             friendly = googletrans.LANGUAGES.get(lang_code.lower())
             if friendly:
                 friendly = friendly.capitalize()
             else:
-                # fallback si la langue n'existe pas dans googletrans
                 friendly = f"Language_{lang_code}"
             new_langs_dict[lang_code] = friendly
 
@@ -672,12 +701,16 @@ class GameConfig(commands.Cog):
             logger.debug(f"[{idx}/{len(channels_list)}] Traitement du canal: {channel.name} (ID={channel.id})")
 
             # Wipe complet
-            await remove_all_overwrites_except_everyone(channel)
-            set_permissions_count += 1
-            await maybe_sleep()
+            try:
+                await remove_all_overwrites_except_everyone(channel)
+                set_permissions_count += 1
+                await maybe_sleep()
+            except Exception as e:
+                logger.error(f"[EXCEPTION] remove_all_overwrites_except_everyone sur channel {channel.id}: {e}", exc_info=True)
+                continue
 
-            # Rôle "bots" => BOT_FULL_PERMS
-            changed = await set_perms_if_needed(channel, bots_role, BOT_FULL_PERMS, reason="bots role full perms")
+            # Rôle "bots" => BOT_FULL_PERMS (avec timeout)
+            changed = await set_perms_with_timeout(channel, bots_role, BOT_FULL_PERMS, reason="bots role full perms")
             if changed:
                 set_permissions_count += 1
                 await maybe_sleep()
@@ -686,39 +719,39 @@ class GameConfig(commands.Cog):
             if isinstance(channel, discord.CategoryChannel):
                 write_role = await self.ensure_write_role(guild, channel)
                 if write_role:
-                    c1 = await set_perms_if_needed(channel, write_role, WRITE_PERMS, reason="Cat write role")
+                    c1 = await set_perms_with_timeout(channel, write_role, WRITE_PERMS, reason="Cat write role")
                     if c1:
                         set_permissions_count += 1
                         await maybe_sleep()
 
+                # Allocation éventuelle
                 cat_alloc = await fetch_category_allocation(channel.id, guild.id)
                 if cat_alloc:
-                    # Dans ton code, cat_alloc = (cat_id, cat_name, allocated_game_guild_id, allocated_game_guild)
-                    allocated_game_guild_prefix = cat_alloc[1]  # Ajuste si ce n'est pas l'index 1
+                    # cat_alloc = (category_id, cat_name, allocated_game_guild_id, allocated_game_guild)
+                    allocated_game_guild_prefix = cat_alloc[1]  # Ajuster si c'est un autre index
                     if allocated_game_guild_prefix in roles_dict:
                         for lang_code, role_obj in roles_dict[allocated_game_guild_prefix].items():
                             ow = discord.PermissionOverwrite(view_channel=True)
-                            c2 = await set_perms_if_needed(channel, role_obj, ow, reason="Cat allocated to 1 guild")
+                            c2 = await set_perms_with_timeout(channel, role_obj, ow, reason="Cat allocated to 1 guild")
                             if c2:
                                 set_permissions_count += 1
                                 await maybe_sleep()
                 else:
-                    # Catégorie non allouée => on met view_channel=True pour toutes les guildes
+                    # Pas allouée => cat "publique"
                     for bp_map in roles_dict.values():
                         for role_obj in bp_map.values():
                             ow = discord.PermissionOverwrite(view_channel=True)
-                            c3 = await set_perms_if_needed(channel, role_obj, ow, reason="Cat public")
+                            c3 = await set_perms_with_timeout(channel, role_obj, ow, reason="Cat public")
                             if c3:
                                 set_permissions_count += 1
                                 await maybe_sleep()
 
             else:
-                # Canal texte/vocal
+                # Salon texte/vocal
                 known = await check_text_channel(channel.id)
                 short_lang = None
                 if known:
                     ch_data = await fetch_text_channel(channel.id)
-                    # short_language en index 7
                     if ch_data and len(ch_data) > 7 and ch_data[7]:
                         short_lang = str(ch_data[7]).upper()
 
@@ -727,7 +760,7 @@ class GameConfig(commands.Cog):
                     cat_alloc = await fetch_category_allocation(channel.category.id, guild.id)
 
                 if cat_alloc:
-                    allocated_game_guild_prefix = cat_alloc[1]  # Ajuster si ce n'est pas le bon index
+                    allocated_game_guild_prefix = cat_alloc[1]
                     if allocated_game_guild_prefix in roles_dict:
                         map_guild_roles = roles_dict[allocated_game_guild_prefix]
                         if short_lang:
@@ -735,7 +768,7 @@ class GameConfig(commands.Cog):
                                 ow = (discord.PermissionOverwrite(view_channel=True)
                                       if lc == short_lang else
                                       discord.PermissionOverwrite(view_channel=False))
-                                c4 = await set_perms_if_needed(channel, role_obj, ow, reason="Guild cat + short_lang")
+                                c4 = await set_perms_with_timeout(channel, role_obj, ow, reason="Guild cat + short_lang")
                                 if c4:
                                     set_permissions_count += 1
                                     await maybe_sleep()
@@ -743,19 +776,19 @@ class GameConfig(commands.Cog):
                             # Pas de langue => tous les rôles de la guilde => True
                             for role_obj in map_guild_roles.values():
                                 ow = discord.PermissionOverwrite(view_channel=True)
-                                c5 = await set_perms_if_needed(channel, role_obj, ow, reason="Guild cat no lang")
+                                c5 = await set_perms_with_timeout(channel, role_obj, ow, reason="Guild cat no lang")
                                 if c5:
                                     set_permissions_count += 1
                                     await maybe_sleep()
                 else:
-                    # Catégorie non allouée => public => toutes les guildes
+                    # Catégorie non allouée => "publique"
                     if short_lang:
                         for bp_map in roles_dict.values():
                             for lc, role_obj in bp_map.items():
                                 ow = (discord.PermissionOverwrite(view_channel=True)
                                       if lc == short_lang else
                                       discord.PermissionOverwrite(view_channel=False))
-                                c6 = await set_perms_if_needed(channel, role_obj, ow, reason="Public cat + short_lang")
+                                c6 = await set_perms_with_timeout(channel, role_obj, ow, reason="Public cat + short_lang")
                                 if c6:
                                     set_permissions_count += 1
                                     await maybe_sleep()
@@ -764,17 +797,18 @@ class GameConfig(commands.Cog):
                         for bp_map in roles_dict.values():
                             for role_obj in bp_map.values():
                                 ow = discord.PermissionOverwrite(view_channel=True)
-                                c7 = await set_perms_if_needed(channel, role_obj, ow, reason="Public cat no lang")
+                                c7 = await set_perms_with_timeout(channel, role_obj, ow, reason="Public cat no lang")
                                 if c7:
                                     set_permissions_count += 1
                                     await maybe_sleep()
-            # on va mettre everyone à View_channel=False et le reste en non defini
+
+            # Forcer @everyone = view_channel=False (avec timeout + logs)
             everyone_role = guild.default_role
-            c8 = await set_perms_if_needed(channel, everyone_role, EVERYONE_BASIC_WITHOUT_VIEW, reason="Everyone no view")
+            c8 = await set_perms_with_timeout(channel, everyone_role, EVERYONE_BASIC_WITHOUT_VIEW, reason="Everyone no view")
             if c8:
                 set_permissions_count += 1
                 await maybe_sleep()
-            
+
             processed_count += 1
             logger.debug(f"[{idx}/{len(channels_list)}] Fin canal '{channel.name}'.")
 
