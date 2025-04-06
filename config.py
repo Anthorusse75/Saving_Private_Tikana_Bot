@@ -20,6 +20,26 @@ formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+# Setup logger for discord.py
+discord_logger = logging.getLogger("discord")
+discord_logger.setLevel(logging.INFO)  # default level
+discord_handler = logging.StreamHandler()
+discord_handler.setFormatter(formatter)
+discord_logger.addHandler(discord_handler)
+
+# Logger for SQL queries
+sql_logger = logging.getLogger("sql")
+sql_logger.setLevel(logging.INFO)  # default level
+sql_handler = logging.StreamHandler()
+sql_handler.setFormatter(formatter)
+sql_logger.addHandler(sql_handler)
+
+# Setup logger file handler
+file_handler = logging.FileHandler("bot.log")
+file_handler.setLevel(logging.INFO)  # default level
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 # ========================================================================
 # Détection du système d'exploitation
 # ========================================================================

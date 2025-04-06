@@ -1,0 +1,22 @@
+{
+    "guildes": {
+        "1": {
+            "id": 1,
+            "name": "GF",
+            "base_prefix": "GXX"
+        },
+        "2": {
+            "id": 2,
+            "name": "Admin",
+            "base_prefix": "AXX"
+        }
+    },
+    "languages": {
+        "EN": "English",
+        "FR": "French",
+        "DE": "German"
+    },
+    "bot_admins": [
+        "365417631706251265"
+    ]
+}
