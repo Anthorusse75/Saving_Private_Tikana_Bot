@@ -6,6 +6,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -35,6 +65,12 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
@@ -162,18 +198,18 @@
                 "read_messages": true
             }
         },
-        "1357065204713787693": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true
-            }
-        },
         "1357103743845404774": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true,
                 "send_messages": true,
                 "read_message_history": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1357065205607301291": {
@@ -257,14 +293,6 @@
                 "read_messages": true
             }
         },
-        "1357103646852255935": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
-            }
-        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -296,14 +324,6 @@
                 "use_embedded_activities": true
             }
         },
-        "1357103647858888935": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "send_messages": true,
-                "read_message_history": true
-            }
-        },
         "1357065209751277692": {
             "target_type": "role",
             "permissions": {
@@ -324,13 +344,13 @@
                 "read_messages": true
             }
         },
-        "1357065203933773996": {
+        "1357065208492720251": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
             }
         },
-        "1357065208492720251": {
+        "1357065203933773996": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
@@ -346,22 +366,6 @@
             "target_type": "role",
             "permissions": {
                 "read_messages": true
-            }
-        },
-        "1357103752582271148": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
-            }
-        },
-        "1357103753727316258": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "send_messages": true,
-                "read_message_history": true
             }
         },
         "1341044653914329131": {
@@ -506,13 +510,13 @@
                 "read_messages": true
             }
         },
-        "1357065208492720251": {
+        "1357065203933773996": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
             }
         },
-        "1357065203933773996": {
+        "1357065208492720251": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
@@ -591,57 +595,10 @@
                 "read_messages": false
             }
         },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251043643068487": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
         "1357065207339552798": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
-            }
-        },
-        "1357103596306563285": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "send_messages": true,
-                "read_message_history": true
             }
         },
         "1357065203933773996": {
@@ -699,12 +656,95 @@
                 "use_embedded_activities": true
             }
         },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251043643068487": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357103596306563285": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true,
+                "send_messages": true,
+                "read_message_history": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1357103594603679875": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true,
                 "read_message_history": true,
                 "send_messages": false
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
             }
         },
         "1357065209751277692": {
@@ -721,131 +761,6 @@
                 "read_messages": false
             }
         },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234257062054334505": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251093081329776": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251047547961374": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1357103732872970261": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
-            }
-        },
         "1357065207339552798": {
             "target_type": "role",
             "permissions": {
@@ -859,6 +774,239 @@
             }
         },
         "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234257062054334505": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251093081329776": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251047547961374": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357103732872970261": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true,
+                "read_message_history": true,
+                "send_messages": false
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
@@ -929,6 +1077,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -958,127 +1136,16 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
     "1234251084961415178": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234256458208776284": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234254647368093796": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234257967772078171": {
         "1224386588767682621": {
             "target_type": "role",
             "permissions": {
@@ -1115,20 +1182,198 @@
                 "read_messages": true
             }
         },
-        "1357103752582271148": {
-            "target_type": "role",
+        "1341044653914329131": {
+            "target_type": "member",
             "permissions": {
-                "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
-            }
-        },
-        "1357103753727316258": {
-            "target_type": "role",
-            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
                 "read_messages": true,
                 "send_messages": true,
-                "read_message_history": true
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234256458208776284": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234254647368093796": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234257967772078171": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1341044653914329131": {
@@ -1176,43 +1421,34 @@
                 "read_messages": false
             }
         },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234256761708478606": {
-        "1224386588767682621": {
+        "1357065207339552798": {
             "target_type": "role",
             "permissions": {
-                "read_messages": false
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1341044653914329131": {
@@ -1245,9 +1481,15 @@
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
             }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
         }
     },
-    "1234259175807385751": {
+    "1234256761708478606": {
         "1224386588767682621": {
             "target_type": "role",
             "permissions": {
@@ -1284,14 +1526,6 @@
                 "read_messages": true
             }
         },
-        "1357103646852255935": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
-            }
-        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -1323,12 +1557,79 @@
                 "use_embedded_activities": true
             }
         },
-        "1357103647858888935": {
+        "1357065209751277692": {
             "target_type": "role",
             "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234259175807385751": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
                 "read_messages": true,
                 "send_messages": true,
-                "read_message_history": true
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
             }
         },
         "1357065209751277692": {
@@ -1345,6 +1646,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -1374,6 +1705,12 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
@@ -1384,6 +1721,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -1413,6 +1780,12 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
@@ -1423,6 +1796,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -1452,6 +1855,12 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
@@ -1462,43 +1871,34 @@
                 "read_messages": false
             }
         },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251128514809857": {
-        "1224386588767682621": {
+        "1357065207339552798": {
             "target_type": "role",
             "permissions": {
-                "read_messages": false
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1341044653914329131": {
@@ -1530,6 +1930,87 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251128514809857": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
@@ -1631,6 +2112,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -1660,6 +2171,12 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
@@ -1676,12 +2193,12 @@
                 "read_messages": true
             }
         },
-        "1357103617190007080": {
+        "1357103616271585362": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true,
-                "send_messages": true,
-                "read_message_history": true
+                "read_message_history": true,
+                "send_messages": false
             }
         },
         "1341044653914329131": {
@@ -1715,12 +2232,12 @@
                 "use_embedded_activities": true
             }
         },
-        "1357103616271585362": {
+        "1357103617190007080": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
+                "send_messages": true,
+                "read_message_history": true
             }
         },
         "1357065208492720251": {
@@ -1743,6 +2260,36 @@
                 "read_messages": false
             }
         },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1341044653914329131": {
             "target_type": "member",
             "permissions": {
@@ -1772,127 +2319,16 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },
     "1234251116183556128": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251139671920711": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234253438284468295": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251088601944114": {
         "1224386588767682621": {
             "target_type": "role",
             "permissions": {
@@ -1929,12 +2365,79 @@
                 "read_messages": true
             }
         },
-        "1357103646852255935": {
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
             "target_type": "role",
             "permissions": {
-                "read_messages": true,
-                "read_message_history": true,
-                "send_messages": false
+                "read_messages": true
+            }
+        }
+    },
+    "1234251139671920711": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1341044653914329131": {
@@ -1968,12 +2471,154 @@
                 "use_embedded_activities": true
             }
         },
-        "1357103647858888935": {
+        "1357065209751277692": {
             "target_type": "role",
             "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234253438284468295": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
                 "read_messages": true,
                 "send_messages": true,
-                "read_message_history": true
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251088601944114": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
             }
         },
         "1357065209751277692": {
@@ -2047,97 +2692,19 @@
                 "read_messages": false
             }
         },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251132273168547": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251060412158029": {
-        "1224386588767682621": {
-            "target_type": "role",
-            "permissions": {
-                "read_messages": false
-            }
-        },
         "1357065207339552798": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
             }
         },
-        "1357065208492720251": {
+        "1357065203933773996": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
             }
         },
-        "1357065203933773996": {
+        "1357065208492720251": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true
@@ -2155,12 +2722,162 @@
                 "read_messages": true
             }
         },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251132273168547": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251060412158029": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
         "1357103646852255935": {
             "target_type": "role",
             "permissions": {
                 "read_messages": true,
                 "read_message_history": true,
                 "send_messages": false
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1341044653914329131": {
@@ -2216,43 +2933,34 @@
                 "read_messages": false
             }
         },
-        "1341044653914329131": {
-            "target_type": "member",
-            "permissions": {
-                "create_instant_invite": true,
-                "manage_channels": true,
-                "add_reactions": true,
-                "priority_speaker": true,
-                "stream": true,
-                "read_messages": true,
-                "send_messages": true,
-                "send_tts_messages": true,
-                "manage_messages": true,
-                "embed_links": true,
-                "attach_files": true,
-                "read_message_history": true,
-                "mention_everyone": true,
-                "external_emojis": true,
-                "connect": true,
-                "speak": true,
-                "manage_roles": true,
-                "manage_webhooks": true,
-                "use_application_commands": true,
-                "request_to_speak": true,
-                "manage_threads": true,
-                "create_public_threads": true,
-                "create_private_threads": true,
-                "external_stickers": true,
-                "send_messages_in_threads": true,
-                "use_embedded_activities": true
-            }
-        }
-    },
-    "1234251112312344668": {
-        "1224386588767682621": {
+        "1357065207339552798": {
             "target_type": "role",
             "permissions": {
-                "read_messages": false
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         },
         "1341044653914329131": {
@@ -2284,6 +2992,87 @@
                 "external_stickers": true,
                 "send_messages_in_threads": true,
                 "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        }
+    },
+    "1234251112312344668": {
+        "1224386588767682621": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": false
+            }
+        },
+        "1357065207339552798": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065203933773996": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065208492720251": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065204713787693": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1357065205607301291": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
+            }
+        },
+        "1341044653914329131": {
+            "target_type": "member",
+            "permissions": {
+                "create_instant_invite": true,
+                "manage_channels": true,
+                "add_reactions": true,
+                "priority_speaker": true,
+                "stream": true,
+                "read_messages": true,
+                "send_messages": true,
+                "send_tts_messages": true,
+                "manage_messages": true,
+                "embed_links": true,
+                "attach_files": true,
+                "read_message_history": true,
+                "mention_everyone": true,
+                "external_emojis": true,
+                "connect": true,
+                "speak": true,
+                "manage_roles": true,
+                "manage_webhooks": true,
+                "use_application_commands": true,
+                "request_to_speak": true,
+                "manage_threads": true,
+                "create_public_threads": true,
+                "create_private_threads": true,
+                "external_stickers": true,
+                "send_messages_in_threads": true,
+                "use_embedded_activities": true
+            }
+        },
+        "1357065209751277692": {
+            "target_type": "role",
+            "permissions": {
+                "read_messages": true
             }
         }
     },

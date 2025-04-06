@@ -1,3 +1,4 @@
+# cogs/gameconfig.py
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -69,7 +70,13 @@ READ_WRITE_PERMS = discord.PermissionOverwrite(
 # Permissions basiques pour @everyone = pas de vue
 # -------------------------------------------------------------------------
 EVERYONE_BASIC = discord.PermissionOverwrite(
-    view_channel=False
+    view_channel=True,
+    read_message_history=True,
+    send_messages=True,
+    send_tts_messages=True,
+    attach_files=True,
+    embed_links=True,
+    add_reactions=True,
 )
 
 # -------------------------------------------------------------------------
@@ -119,6 +126,32 @@ class GameConfig(commands.Cog):
         os.makedirs(self.BASE_DIR, exist_ok=True)
         # Met à jour la config pour tous les serveurs au démarrage
         self.bot.loop.create_task(self.update_all_server_configs())
+
+    # ===============================
+    # Méthode statique pour créer le décorateur
+    # ===============================
+    @staticmethod
+    def bot_admin_only():
+        """
+        Retourne un décorateur app_commands.check
+        qui vérifie si l'utilisateur est admin du bot dans ce serveur.
+        """
+        async def predicate(interaction: discord.Interaction) -> bool:
+            # On récupère la Cog GameConfig
+            cog = interaction.client.get_cog("GameConfig")
+            if not cog:
+                return False  # si la cog n'est pas trouvée
+
+            # Vérifie qu'on est bien dans un serveur
+            if not interaction.guild_id:
+                return False
+
+            # Charge la config du serveur (fichier JSON, etc.)
+            config = cog.load_server_config(interaction.guild_id)
+
+            # Appel de la méthode is_bot_admin(...) de la cog
+            return cog.is_bot_admin(interaction.user, interaction.guild, config)
+        return app_commands.check(predicate)
 
     # ---------------------------------------------------------------------
     # Fonctions utilitaires de config serveur (fichiers JSON)
@@ -184,6 +217,26 @@ class GameConfig(commands.Cog):
                         logger.info(f"Config mise à jour pour la guilde {folder}.")
                     except Exception as e:
                         logger.error(f"Erreur mise à jour config pour guilde {folder}: {e}")
+
+    # ---------------------------------------------------------------------
+    # Fonctions pour créer/trouver un rôle "bots"
+    # ---------------------------------------------------------------------
+    async def ensure_bots_role(self, guild: discord.Guild) -> discord.Role:
+        """
+        Vérifie l'existence du rôle "bots". Le crée si besoin.
+        Ne lui donne pas de permissions "server" globales,
+        parce qu'on utilisera des overwrites "BOT_FULL_PERMS" par canal.
+        """
+        role_name = "bots"
+        bots_role = discord.utils.get(guild.roles, name=role_name)
+        if not bots_role:
+            try:
+                bots_role = await guild.create_role(name=role_name)
+                logger.info(f"Création du rôle {role_name} pour ce serveur (ID={guild.id})")
+            except Exception as e:
+                logger.error(f"Impossible de créer le rôle {role_name} : {e}")
+                return None
+        return bots_role
 
     # ---------------------------------------------------------------------
     # Sauvegarde / restauration des permissions (backup en JSON)
@@ -266,7 +319,51 @@ class GameConfig(commands.Cog):
     # Commandes Slash
     # ---------------------------------------------------------------------
 
+    @app_commands.command(name="full_reset_permissions", description="Efface toutes les permissions de tous les salons, sauf @everyone.")
+    @bot_admin_only()
+    async def full_reset_permissions(self, interaction: discord.Interaction):
+        """
+        Cette commande va passer sur tous les salons du serveur et 
+        supprimer tous les overwrites, puis remettre @everyone = EVERYONE_BASIC.
+        """
+        guild = interaction.guild
+        if not guild:
+            await interaction.response.send_message(
+                "❌ Cette commande ne peut être utilisée qu'en serveur.",
+                ephemeral=True
+            )
+            return
+
+        # Pour éviter les timeouts, on répond d'abord
+        await interaction.response.defer(ephemeral=True)
+
+        # On boucle sur tous les salons
+        count_channels = len(guild.channels)
+        modified_channels = 0
+
+        for i, channel in enumerate(guild.channels, start=1):
+            # On supprime tous les overwrites
+            try:
+                # On édite le salon avec un dictionnaire vide
+                await channel.edit(overwrites={})
+                # Ensuite, on ajoute le overwrite de @everyone
+                everyone_role = guild.default_role
+                await channel.set_permissions(everyone_role, overwrite=EVERYONE_BASIC)
+                modified_channels += 1
+            except Exception as e:
+                print(f"[full_reset_permissions] Erreur sur le channel {channel.name} ({channel.id}) : {e}")
+
+            # Petite pause pour éviter d'éventuels "rate limits"
+            await asyncio.sleep(0.4)
+
+        msg = (
+            f"✅ Réinitialisation terminée pour **{modified_channels}** salons "
+            f"(sur {count_channels} trouvés)."
+        )
+        await interaction.followup.send(msg, ephemeral=True)
+    
     @app_commands.command(name="guild_add", description="Ajoute une nouvelle guilde de jeu (max 10).")
+    @bot_admin_only()
     async def guild_add(self, interaction: discord.Interaction, name: str):
         """Ajoute une guilde dans la config, puis crée les rôles de langue correspondants."""
         server_id = interaction.guild_id
@@ -336,6 +433,7 @@ class GameConfig(commands.Cog):
         )
 
     @app_commands.command(name="config_show", description="Affiche la configuration du serveur")
+    @bot_admin_only()
     async def config_show(self, interaction: discord.Interaction):
         server_id = interaction.guild_id
         config = self.load_server_config(server_id)
@@ -372,6 +470,7 @@ class GameConfig(commands.Cog):
         await interaction.response.send_message(message, ephemeral=True)
 
     @app_commands.command(name="cat_allocate", description="Alloue une catégorie à une guilde de jeu")
+    @bot_admin_only()
     @app_commands.autocomplete(cat_id=cat_name_autocomplete, guilde=guilde_autocomplete)
     @app_commands.describe(cat_id="ID de la catégorie", guilde="Nom ou préfixe de la guilde de jeu")
     async def cat_allocate(self, interaction: discord.Interaction, cat_id: str, guilde: str):
@@ -440,6 +539,7 @@ class GameConfig(commands.Cog):
         await interaction.response.send_message(message, ephemeral=True)
 
     @app_commands.command(name="server_list_languages", description="Liste les langues configurées sur ce serveur")
+    @bot_admin_only()
     async def server_list_languages(self, interaction: discord.Interaction):
         server_id = interaction.guild_id
         config = self.load_server_config(server_id)
@@ -477,6 +577,7 @@ class GameConfig(commands.Cog):
         return read_role, write_role
 
     @app_commands.command(name="sync_channels", description="Réinitialise puis applique les permissions par guilde+langue, plus roles READ/WRITE.")
+    @bot_admin_only()
     async def sync_channels(self, interaction: discord.Interaction):
         logger.debug("===== [sync_channels] Début =====")
         try:
@@ -487,6 +588,11 @@ class GameConfig(commands.Cog):
         guild = interaction.guild
         if not guild:
             await interaction.followup.send("❌ Impossible de synchroniser hors d'un serveur.", ephemeral=True)
+            return
+
+        bots_role = await self.ensure_bots_role(guild)
+        if not bots_role:
+            await interaction.followup.send("❌ Échec : impossible de créer/trouver le rôle 'bots'.", ephemeral=True)
             return
 
         server_id = guild.id
@@ -538,7 +644,7 @@ class GameConfig(commands.Cog):
             await maybe_sleep()
 
             # Bot full perms
-            changed = await set_perms_if_needed(channel, guild.me, BOT_FULL_PERMS, reason="Bot full perms")
+            changed = await set_perms_if_needed(channel, bots_role, BOT_FULL_PERMS, reason="bots role full perms")
             if changed:
                 set_permissions_count += 1
                 await maybe_sleep()
@@ -649,6 +755,7 @@ class GameConfig(commands.Cog):
         logger.debug("===== [sync_channels] Fin =====")
 
     @app_commands.command(name="rollback", description="Restaure les permissions depuis le dernier backup")
+    @bot_admin_only()
     async def rollback(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True)
         server_id = interaction.guild_id
@@ -682,6 +789,7 @@ class GameConfig(commands.Cog):
         await interaction.followup.send(f"✅ {restored_channels} canaux restaurés.", ephemeral=True)
 
     @app_commands.command(name="help", description="Aide détaillée pour les commandes du bot")
+    @bot_admin_only()
     async def help(self, interaction: discord.Interaction):
         help_message = (
             "**Aide du bot**\n\n"
@@ -702,6 +810,7 @@ class GameConfig(commands.Cog):
         await interaction.response.send_message(help_message, ephemeral=True)
 
     @app_commands.command(name="admin_add", description="Ajoute un administrateur du bot")
+    @bot_admin_only()
     async def admin_add(self, interaction: discord.Interaction, user: discord.Member):
         config = self.load_server_config(interaction.guild_id)
         if not self.is_bot_admin(interaction.user, interaction.guild, config):
@@ -720,6 +829,7 @@ class GameConfig(commands.Cog):
         await interaction.response.send_message(f"✅ {user.mention} est maintenant admin du bot.", ephemeral=True)
 
     @app_commands.command(name="admin_remove", description="Retire un administrateur du bot")
+    @bot_admin_only()
     async def admin_remove(self, interaction: discord.Interaction, user: discord.Member):
         config = self.load_server_config(interaction.guild_id)
         if not self.is_bot_admin(interaction.user, interaction.guild, config):
@@ -738,6 +848,7 @@ class GameConfig(commands.Cog):
         await interaction.response.send_message(f"✅ {user.mention} n'est plus admin du bot.", ephemeral=True)
 
     @app_commands.command(name="admin_list", description="Liste les administrateurs du bot")
+    @bot_admin_only()
     async def admin_list(self, interaction: discord.Interaction):
         config = self.load_server_config(interaction.guild_id)
         admins = self.get_bot_admins(interaction.guild, config)
